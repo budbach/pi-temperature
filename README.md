@@ -1,10 +1,10 @@
-** Pi Temperature
+## Pi Temperature
 
 Simple web app that gets the temperature from a dht22 on a raspberry pi in a format suitable for querying with prometheus
 
 Requires python3.
 
-** Setup
+## Setup
 
 Install CircuitPython:  https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi
 
