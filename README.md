@@ -14,6 +14,6 @@ Create a virtualenv:  `python3 -m venv venv`
 
 Activate the virtualenv:  `source venv/bin/activete`
 
-Install the requirements: `pip install -r requirements.txt
+Install the requirements: `pip install -r requirements.txt`
 
 Run the app:  `python temperature.py`
