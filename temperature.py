@@ -1,23 +1,26 @@
 import time
-import board
-import adafruit_dht
+import Adafruit_DHT
+
 from flask import Flask
 
-dht_device = adafruit_dht.DHT22(board.D14)
+dht_device = Adafruit_DHT.DHT22
+pin = 14
 
 app = Flask(__name__)
 
 @app.route("/metrics")
 def metrics():
     data = []
-    while len(data) != 2:
-        try:
-            data.append(f'pi_temperature {dht_device.temperature}')
-            data.append(f'pi_humidity {dht_device.humidity}')
-        except Exception as e:
-            app.logger.error(e)
-            data = []
-            time.sleep(2)
+    retries = 3
+    while retries > 0:
+        retries -= 1
+        humidity, temperature = Adafruit_DHT.read_retry(dht_device, pin)
+        if humidity and temperature:
+            data.append(f'pi_temperature {temperature}')
+            data.append(f'pi_humidity {humidity}')
+            break
+        app.logger.error('Incomplete data from DHT Device')
+        time.sleep(2)
         
     app.logger.info(", ".join(data))
 
