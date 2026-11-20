@@ -1,0 +1,17 @@
+[project]
+name = "pi-temperature"
+version = "0.2.0"
+description = "Serve DHT22 temperature and humidity from a Raspberry Pi as Prometheus metrics"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.uv]
+package = false

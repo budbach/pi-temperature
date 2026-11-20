@@ -1,0 +1,26 @@
+# systemd user unit for pi-temperature.
+#
+# Runs as whichever user installs it; %h is that user's home directory.
+# Assumes the repo is cloned to ~/pi-temperature.
+#
+# Install:
+#   mkdir -p ~/.config/systemd/user
+#   cp pi-temperature.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now pi-temperature
+#   sudo loginctl enable-linger "$USER"   # start at boot, without logging in
+
+[Unit]
+Description=DHT22 temperature/humidity Prometheus exporter
+
+[Service]
+WorkingDirectory=%h/pi-temperature
+# The venv is built ahead of time with `uv sync --frozen --no-dev`,
+# so startup needs no network access.
+ExecStart=%h/pi-temperature/.venv/bin/python temperature.py
+Environment=PORT=5000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
