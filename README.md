@@ -47,14 +47,20 @@ pin on GPIO 14.
    curl http://localhost:5000/metrics
    ```
 
-5. Run it on boot with systemd:
+5. Run it on boot as a systemd user service (it runs as your user, so
+   nothing in the unit file needs editing):
 
    ```bash
-   sudo cp pi-temperature.service /etc/systemd/system/
-   sudo systemctl daemon-reload
-   sudo systemctl enable --now pi-temperature
-   journalctl -u pi-temperature -f
+   mkdir -p ~/.config/systemd/user
+   cp pi-temperature.service ~/.config/systemd/user/
+   systemctl --user daemon-reload
+   systemctl --user enable --now pi-temperature
+   sudo loginctl enable-linger "$USER"
+   journalctl --user -u pi-temperature -f
    ```
+
+   `enable-linger` lets your user services start at boot without you
+   logging in.
 
 The `/metrics` endpoint returns HTTP 503 if the sensor can't be read after
 several retries, so Prometheus records a failed scrape rather than a stale
