@@ -296,6 +296,10 @@ button:focus-visible {
   text-align: center;
   padding: 0 24px;
 }
+/* The rule above sets display, which would otherwise override the hidden
+   attribute and leave an old message showing over the chart. */
+.chart-empty[hidden],
+.readout[hidden] { display: none; }
 
 /* ---- small screens --------------------------------------------------- */
 
