@@ -158,6 +158,20 @@ The user picked **A**.
 - README and the systemd unit description are updated to match (they
   currently say `/metrics` reads the sensor per request).
 
+## Changed during the build
+
+- **30d and 90d show one point per day, not per hour.** Hourly points over
+  90 days showed every daily swing and buried the trend. The API still
+  returns hourly buckets; the page groups them into local days and draws the
+  daily average as a smooth line, with the day's low–high as the band.
+  Days with fewer than 18 hours of data (today, either side of an outage)
+  are left out, because their averages are skewed.
+- **The 24h line is lightly smoothed for drawing** (9-point rolling
+  average). The sensor's 0.1° steps otherwise look like a staircase. Hover
+  shows the raw reading.
+- **Charts are hand-drawn SVG**, with no chart library, to get the glow and
+  temperature-coloured line exactly.
+
 ## Left to the builder
 
 - Charting library, as long as it's small and fast on a phone or tablet

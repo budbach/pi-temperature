@@ -11,7 +11,7 @@
 #   sudo loginctl enable-linger "$USER"   # start at boot, without logging in
 
 [Unit]
-Description=DHT22 temperature/humidity Prometheus exporter
+Description=DHT22 temperature/humidity recorder and dashboard
 
 [Service]
 WorkingDirectory=%h/pi-temperature

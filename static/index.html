@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070c1d">
+  <title>Room temperature</title>
+  <link rel="preload" href="/static/fonts/big-shoulders-display.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='9' fill='%238fe3ff'/%3E%3C/svg%3E">
+</head>
+<body>
+  <main class="page">
+    <header class="top">
+      <h1 class="place">Room temperature</h1>
+      <div class="units" role="group" aria-label="Temperature unit">
+        <button type="button" data-unit="F" aria-pressed="true">°F</button>
+        <button type="button" data-unit="C" aria-pressed="false">°C</button>
+      </div>
+    </header>
+
+    <section class="now" aria-live="polite">
+      <div class="reading reading-temp">
+        <span class="value" id="temp">--</span><span class="unit" id="temp-unit">°F</span>
+        <span class="caption">Temperature</span>
+      </div>
+      <div class="reading reading-hum">
+        <span class="value" id="hum">--</span><span class="unit">%</span>
+        <span class="caption">Humidity</span>
+      </div>
+    </section>
+
+    <p class="status" id="status"><span class="dot" aria-hidden="true"></span><span id="status-text">Connecting to the sensor…</span></p>
+    <p class="range-note" id="range-note">&nbsp;</p>
+
+    <section class="chart-panel" aria-label="History chart">
+      <div class="chart-head">
+        <div class="ranges" role="group" aria-label="Time range">
+          <button type="button" data-range="24h" aria-pressed="true">24 hours</button>
+          <button type="button" data-range="30d" aria-pressed="false">30 days</button>
+          <button type="button" data-range="90d" aria-pressed="false">90 days</button>
+        </div>
+        <div class="legend">
+          <span class="key key-temp">Temperature</span>
+          <span class="key key-hum">Humidity</span>
+        </div>
+      </div>
+      <div class="chart" id="chart">
+        <svg id="chart-svg" role="img" aria-label="Temperature and humidity over time"></svg>
+        <div class="readout" id="readout" hidden></div>
+        <p class="chart-empty" id="chart-empty" hidden></p>
+      </div>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
