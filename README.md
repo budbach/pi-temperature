@@ -1,10 +1,17 @@
 ## Pi Temperature
 
-Simple web app that reads the temperature and humidity from a DHT22 on a
-Raspberry Pi and serves them at `/metrics` in a format Prometheus can scrape.
+A small web app for a Raspberry Pi with a DHT22 sensor. It records the
+temperature and humidity once a minute and serves:
+
+- **a dashboard** at `/`: current readings, plus charts for the last 24
+  hours, 30 days and 90 days;
+- **`/metrics`** for Prometheus, if you want to scrape it;
+- **`/api/current`** and **`/api/history?range=24h|30d|90d`** as JSON.
 
 The sensor is read through the Linux kernel's `dht11` driver (which also
 handles the DHT22), so there is no Python sensor library to install.
+Readings are stored in SQLite at `~/.local/share/pi-temperature/readings.db`
+(set `DB_PATH` to change it).
 
 ## Setup
 
@@ -40,11 +47,10 @@ pin on GPIO 14.
    uv sync --frozen --no-dev
    ```
 
-4. Try it:
+4. Try it, then open `http://<your-pi>.local:5000/` in a browser:
 
    ```bash
    uv run temperature.py
-   curl http://localhost:5000/metrics
    ```
 
 5. Run it on boot as a systemd user service (it runs as your user, so
@@ -62,9 +68,33 @@ pin on GPIO 14.
    `enable-linger` lets your user services start at boot without you
    logging in.
 
-The `/metrics` endpoint returns HTTP 503 if the sensor can't be read after
-several retries, so Prometheus records a failed scrape rather than a stale
-value.
+The Pi Zero W has no real-time clock, so after a reboot the app waits for
+the clock to sync over the network before recording anything.
+
+`/metrics` and `/api/current` return HTTP 503 when there's no reading from
+the last 5 minutes, so Prometheus records a failed scrape rather than a
+stale value.
+
+## Updating
+
+```bash
+cd ~/pi-temperature
+git pull
+uv sync --frozen --no-dev
+systemctl --user restart pi-temperature
+```
+
+## Backing up the history
+
+The readings live in one SQLite file. To copy it safely while the app is
+running, from another machine:
+
+```bash
+ssh <your-pi>.local 'sqlite3 ~/.local/share/pi-temperature/readings.db ".backup /tmp/readings.db"'
+scp <your-pi>.local:/tmp/readings.db ./readings-backup.db
+```
+
+(`sudo apt install sqlite3` on the Pi if the `sqlite3` command is missing.)
 
 ## Development
 
@@ -72,4 +102,12 @@ value.
 uv run pytest
 ```
 
-The tests use a fake sysfs tree, so they run anywhere.
+The tests use a fake sensor and temporary databases, so they run anywhere.
+
+To work on the page without a Pi, fill a database with 90 days of
+synthetic readings and run with the fake sensor:
+
+```bash
+DB_PATH=/tmp/fake.db uv run scripts/seed_fake_data.py
+SENSOR=fake DB_PATH=/tmp/fake.db uv run temperature.py
+```
